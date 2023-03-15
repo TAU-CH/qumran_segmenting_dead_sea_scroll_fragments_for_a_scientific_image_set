@@ -21,9 +21,10 @@ The trained bar detection model can be downloaded from [here](https://www.dropbo
     ```
    If your CUDA version is different than 11.5, consider updating the version or manually modifying the commands below to reflect the differences.
 
-2. Create a virtual environment using conda with Python 3.7:
+2. Create a virtual environment using conda with Python 3.7 and activate it:
     ```
     conda create --name torchenv python=3.7
+    conda activate torchenv
     ```
 
 3. Install PyTorch 1.12.1, torchvision 0.13.1, and torchaudio 0.12.1, with CUDA 11.3:
