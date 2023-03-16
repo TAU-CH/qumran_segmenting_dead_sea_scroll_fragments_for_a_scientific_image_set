@@ -99,16 +99,6 @@ def get_corresponding_points(img1, img1_mask, img2, img2_mask, scale, extractor)
     # return the corresponding key points, descriptors, and matches
     return src, dst, kp1, des1, kp2, des2, good
 
-def match(im1, im2):
-    corresponding_points = get_corresponding_points(
-        im1,
-        None,
-        im2,
-        None,
-    )
-    return corresponding_points
-
-
 # This function returns the transformation required to register verso and recto images,
 # applies it to the verso image, and saves the transformed image.
 def get_transform_from_verso_to_recto(recto_ir, verso_ir, recto_color, verso_color, excludes, fragment_name: str, extractor, threshold):
@@ -129,12 +119,15 @@ def get_transform_from_verso_to_recto(recto_ir, verso_ir, recto_color, verso_col
 
         # Retrieves the required information from the transformation dictionary and saves the transformed verso image.
         reverse_transform, verso_transform, recto_ruler_mask, verso_ruler_mask, num_inliers = trans
+        
+        # Save the transformed verso image
         masked_verso_ir = np.where(verso_ruler_mask == 255, verso_ir, 0)
         aligned_flipped_masked_verso_ir = cv2.warpAffine(np.flip(masked_verso_ir, axis=1), verso_transform, (recto_ir.shape[1], recto_ir.shape[0]))
         extractor_threshold_folder = Path("visual_results") / f"{extractor}_{threshold}"
         if not extractor_threshold_folder.exists():
             extractor_threshold_folder.mkdir(parents=True)
         transformed_verso_file = extractor_threshold_folder / f"aligned_verso_{fragment_name}.jpg"
+        cv2.imwrite(str(transformed_verso_file), aligned_flipped_masked_verso_ir)
     
     # If no transformation was found for any scale, returns None.
     if not trans:
@@ -166,7 +159,10 @@ def calculate_transform_from_verso_to_recto(recto, verso, recto_color, verso_col
         Path("./tmp/init_verso_mask.np"),
     )
     del recto_edge_mask, verso_edge_mask
-
+   
+    corresponding_points = [], []
+    src = np.array([])
+    dst = np.array([])
     # Get corresponding points of recto and verso images
     corresponding_points = get_corresponding_points(
         recto,
@@ -214,7 +210,7 @@ def calculate_transform_from_verso_to_recto(recto, verso, recto_color, verso_col
     # cv2.imwrite("matches1.png", matches1)
 
     # Get inlier matches
-    inlier_matches = [m for i, m in enumerate(good) if mask[i]]
+    #inlier_matches = [m for i, m in enumerate(good) if mask[i]]
     
     # Draw matches between recto and verso images with inlier keypoints
     # matchesi = cv2.drawMatches(recto, inlier_keypoints1, fliped_verso, inlier_keypoints2, inlier_matches[:-1], None, flags=2)
@@ -236,31 +232,115 @@ def align_recto_verso(fragment_name: str, recto_color_file: Path, recto_ir_file:
     verso_color = cv2.imread(str(verso_color_file.absolute()))
     verso_ir = cv2.imread(str(verso_ir_file.absolute()), cv2.IMREAD_GRAYSCALE)
     
-    # Get reverse and verso transforms, recto and verso masks and number of inliers from the recto and verso images
-    transform = calculate_transform_from_verso_to_recto(recto_ir, verso_ir, recto_color, verso_color, excludes, 1.0, extractor, threshold)
-    
-    # If transforms are None, return 0
-    if transform is None:
+    if get_transform_from_verso_to_recto(recto_ir, verso_ir, recto_color, verso_color, excludes, fragment_name, extractor, threshold)==None:
         return 0
-    
-    reverse_transform, verso_transform, recto_ruler_mask, verso_ruler_mask, num_inliers = transform
+        
+    # Get reverse and verso transforms, recto and verso masks and number of inliers from the recto and verso images
+    reverse_transform, verso_transform, recto_ruler_mask, verso_ruler_mask, num_inliers = get_transform_from_verso_to_recto(recto_ir, verso_ir, recto_color, verso_color, excludes, fragment_name, extractor, threshold)
     
     # Create output directories if they don't exist
     if not RULERS_OUT_PATH.exists():
         RULERS_OUT_PATH.mkdir()
     if not RECTO_VERSO_OUT_PATH.exists():
         RECTO_VERSO_OUT_PATH.mkdir()
+    (RECTO_VERSO_OUT_PATH / f"""{fragment_name}_recto.json""").write_bytes(orjson.dumps(reverse_transform.tolist()))
+    (RECTO_VERSO_OUT_PATH / f"""{fragment_name}_verso.json""").write_bytes(orjson.dumps(verso_transform.tolist())) 
   
     return num_inliers
     
 if __name__ == "__main__":
-
+    '''
     align_recto_verso(
-        "1108_4",
-        Path("test/images/1108_4/recto_color.jpg"),
-        Path("test/images/1108_4/recto_infrared.jpg"),
-        Path("test/images/1108_4/verso_color.jpg"),
-        Path("test/images/1108_4/verso_infrared.jpg"), cv2.SIFT_create, 15 )
+        "1108_9",
+        Path("test/images/1108_9/recto_color.jpg"),
+        Path("test/images/1108_9/recto_infrared.jpg"),
+        Path("test/images/1108_9/verso_color.jpg"),
+        Path("test/images/1108_9/verso_infrared.jpg"))
+    '''
+
+
+# This function reads images from a given folder and its subfolders
+# It returns a generator that yields the file paths of the images
+def read_images_from_folder(folder_path):
+    # Get the subfolders under the given folder path
+    subfolders = [f.path for f in os.scandir(folder_path) if f.is_dir()]
     
+    # Iterate through each subfolder
+    for subfolder in subfolders:
+        # Extract the name of the fragment from the subfolder path
+        fragment_name = subfolder.split("/")[-1]
+        
+        # Get the file paths of the recto_color, recto_infrared, verso_color, and verso_infrared images
+        recto_color_file = Path(subfolder) / "recto_color.jpg"
+        recto_ir_file = Path(subfolder) / "recto_infrared.jpg"
+        verso_color_file = Path(subfolder) / "verso_color.jpg"
+        verso_ir_file = Path(subfolder) / "verso_infrared.jpg"
+        
+        # Yield the fragment name and file paths of the four images as a tuple
+        yield fragment_name, recto_color_file, recto_ir_file, verso_color_file, verso_ir_file
+
+# This function returns a dictionary that maps extractor types to thresholds to the number of inliers obtained
+def combine_inliers_from_alignments(folder_path):
+    # Define the extractors and thresholds to use
+    extractors = [ cv2.KAZE_create, cv2.SIFT_create, cv2.AKAZE_create, cv2.ORB_create]
+    thresholds = [21,19,17,15,13,11,9,7,5]
+    
+    # Create an empty dictionary to store the inliers
+    inliers = {extractor: {threshold: [] for threshold in thresholds} for extractor in extractors}
+    
+    # Process each image from the folder
+    for fragment_name, recto_color_file, recto_ir_file, verso_color_file, verso_ir_file in read_images_from_folder(folder_path):
+        print("fragment name: ")
+        print(fragment_name)
+        # Iterate through each extractor and threshold combination
+        for extractor in extractors:
+            print("extractor: ")
+            print(extractor)
+            for threshold in thresholds:
+                print("threshold: ")
+                print(threshold)
+                # Extract the number of inliers using the current extractor and threshold combination
+                number_of_inliers = align_recto_verso(fragment_name, recto_color_file, recto_ir_file, verso_color_file, verso_ir_file, extractor, threshold)
+                
+                # Store the number of inliers for the current extractor and threshold combination
+                inliers[extractor][threshold].append(number_of_inliers)
+                
+    # Return the dictionary of inliers
+    return inliers
 
 
+folder_path = "test/images"
+inliers = combine_inliers_from_alignments(folder_path)
+
+with open("inliers.txt", "w") as f:
+    for extractor in inliers:
+        for threshold in inliers[extractor]:
+            f.write(str(extractor) + " " + str(threshold) + " " + str(sum(inliers[extractor][threshold])/len(inliers[extractor][threshold])) + "\n")
+
+
+# read inliers.txt into a dictionary
+inliers = {}
+with open("inliers.txt") as f:
+    lines = f.readlines()
+    for line in lines:
+        _, _, e, threshold, mean_inlier = line.strip().split()
+        extractor = e.split('_')[0]
+        threshold = int(threshold)
+        mean_inlier = float(mean_inlier)
+        if extractor not in inliers:
+            inliers[extractor] = {}
+        inliers[extractor][threshold] = mean_inlier
+
+# plot the data
+for extractor, thresholds_and_inliers in inliers.items():
+    x = list(thresholds_and_inliers.keys())
+    y = list(thresholds_and_inliers.values())
+    plt.plot(x, y, label=extractor)
+
+# add labels and legend
+plt.xlabel("Threshold")
+plt.ylabel("Mean number of inliers")
+plt.legend()
+
+# save the plot
+plt.savefig("inliers.png")

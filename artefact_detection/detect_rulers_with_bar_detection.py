@@ -39,6 +39,7 @@ for annotation in annotations['annotations']:
 # Create masks for each image in the data folder
 for subfolder_name in os.listdir(data_folder):
     subfolder_path = os.path.join(data_folder, subfolder_name)
+    print(subfolder_name)
     if not os.path.isdir(subfolder_path):
         continue
 
@@ -48,7 +49,6 @@ for subfolder_name in os.listdir(data_folder):
     # Create mask for recto color image if there are annotations for it
     if recto_color_img_name in img_to_coords:
         recto_color_img_path = os.path.join(subfolder_path, 'recto_color.jpg')
-        print(recto_color_img_path)
         img = cv2.imread(recto_color_img_path)
         mask = create_mask(img.shape[:2], img_to_coords[recto_color_img_name])
         cv2.imwrite(os.path.join(ruler_positions, recto_color_img_name), mask)
