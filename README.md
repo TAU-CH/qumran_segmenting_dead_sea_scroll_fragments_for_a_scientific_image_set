@@ -6,7 +6,33 @@ The dataset include high-resolution images of Dead Sea Scroll fragments, along w
 
 The trained bar detection model can be downloaded from [here](https://www.dropbox.com/s/5on3gy2c86t8tv9/model_final.pth?dl=0).
 
-# Installation Guide
+# Installation Gudie for high HPC operated by the GWDG for both the Max Planck Society and the University of Göttingen
+
+## Create the virtual environment at the front end node
+```
+module load anaconda3/2021.05
+conda create -n my_env
+source activate my_env
+pip3 install torch torchvision torchaudio
+module load gcc
+python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'
+```
+
+## Start an active shell at a GPU node
+```
+srun -p gpu -t 20 --gpus-per-node 1 --pty /bin/bash -i
+```
+## Load the modules and run the code at the GPU node
+```
+module load anaconda3/2021.05
+module load gcc
+module load cuda
+source activate my_env
+cd ~/code/find_masks/sqe_segmentation/bar_detection
+python detect_bar.py
+```
+
+# Installation Guide for TAU servers
 
 ## Prerequisites
 
