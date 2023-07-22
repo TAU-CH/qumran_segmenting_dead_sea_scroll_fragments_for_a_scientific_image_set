@@ -6,7 +6,7 @@ The dataset include high-resolution images of Dead Sea Scroll fragments, along w
 
 The trained bar detection model can be downloaded from [here](https://www.dropbox.com/s/5on3gy2c86t8tv9/model_final.pth?dl=0).
 
-# Installation Gudie for high HPC operated by the GWDG for both the Max Planck Society and the University of Göttingen
+# Installation Gudie for HPC operated by the GWDG for both the Max Planck Society and the University of Göttingen
 
 ## Create the virtual environment at the front end node
 ```
