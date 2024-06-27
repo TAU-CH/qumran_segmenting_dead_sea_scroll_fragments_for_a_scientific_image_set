@@ -1,10 +1,10 @@
 # qumran_segmenting_dead_sea_scroll_fragments_for_a_scientific_image_set
-This repository contains the source code and dataset used in the paper "Segmenting Dead Sea Scroll Fragments for a Scientific Image Set" by [Bronson Brown-deVost](https://github.com/Bronson-Brown-deVost). 
+This repository contains the source code and dataset used in the paper "[Segmenting Dead Sea Scroll Fragments for a Scientific Image Set](https://arxiv.org/abs/2406.15692)" by [Bronson Brown-deVost](https://github.com/Bronson-Brown-deVost). 
 The dataset include high-resolution images of Dead Sea Scroll fragments, along with corresponding ground-truth segmentation masks for evaluation purposes. The code and dataset can be used to reproduce the results of the paper, and can also serve as a starting point for further research in the field.
 
 # Trained model
 
-The trained bar detection model can be downloaded from [here](https://www.dropbox.com/s/5on3gy2c86t8tv9/model_final.pth?dl=0).
+The trained bar detection model can be downloaded from [here]([https://www.dropbox.com/s/5on3gy2c86t8tv9/model_final.pth?dl=0](https://tauex-my.sharepoint.com/:u:/g/personal/berat_tauex_tau_ac_il/EQsbt9qn1P9KtuJmZ2ffJP8B_25gfLYuLarpgI1CU04alQ?e=8p1Dtx)).
 
 # Installation Gudie for HPC operated by the GWDG for both the Max Planck Society and the University of Göttingen
 
