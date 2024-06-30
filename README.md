@@ -2,9 +2,15 @@
 This repository contains the source code and dataset used in the paper "[Segmenting Dead Sea Scroll Fragments for a Scientific Image Set](https://arxiv.org/abs/2406.15692)" by [Bronson Brown-deVost](https://github.com/Bronson-Brown-deVost). 
 The dataset include high-resolution images of Dead Sea Scroll fragments, along with corresponding ground-truth segmentation masks for evaluation purposes. The code and dataset can be used to reproduce the results of the paper, and can also serve as a starting point for further research in the field.
 
-# Trained model
+# Trained model for bar detection on the dead sea scroll fragment images
 
 The trained bar detection model can be downloaded from [here](https://tauex-my.sharepoint.com/:u:/g/personal/berat_tauex_tau_ac_il/EQsbt9qn1P9KtuJmZ2ffJP8B_25gfLYuLarpgI1CU04alQ?e=8p1Dtx).
+
+## Sample bar detection results
+
+![Sample result 1](letter_detection_complex_1.png)
+![Sample result 2](letter_detection_complex_2.png)
+![Sample result 3](letter_detection_complex_3.png)
 
 # Installation Gudie for HPC operated by the GWDG for both the Max Planck Society and the University of Göttingen
 
