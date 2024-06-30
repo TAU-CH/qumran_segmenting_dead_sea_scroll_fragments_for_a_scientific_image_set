@@ -8,9 +8,9 @@ The trained bar detection model can be downloaded from [here](https://tauex-my.s
 
 ## Sample bar detection results
 
-![Sample result 1](letter_detection_complex_1.png)
-![Sample result 2](letter_detection_complex_2.png)
-![Sample result 3](letter_detection_complex_3.png)
+![Sample result 1](images/bar_detection_complex_1.png)
+![Sample result 2](images/bar_detection_complex_2.png)
+![Sample result 3](images/bar_detection_complex_3.png)
 
 # Installation Gudie for HPC operated by the GWDG for both the Max Planck Society and the University of Göttingen
 
