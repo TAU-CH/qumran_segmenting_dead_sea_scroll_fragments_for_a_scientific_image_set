@@ -4,7 +4,7 @@ The dataset include high-resolution images of Dead Sea Scroll fragments, along w
 
 # Trained model for bar detection on the dead sea scroll fragment images
 
-The trained bar detection model can be downloaded from [here](https://tauex-my.sharepoint.com/:u:/g/personal/berat_tauex_tau_ac_il/EQsbt9qn1P9KtuJmZ2ffJP8B_25gfLYuLarpgI1CU04alQ?e=8p1Dtx).
+The trained bar detection model can be downloaded from [here](https://tauex-my.sharepoint.com/:u:/g/personal/berat_tauex_tau_ac_il/EQsbt9qn1P9KtuJmZ2ffJP8BhMFh5uAkKjykD__ecki07Q?e=LPHsSL).
 
 ## Sample bar detection results
 
