@@ -6,7 +6,7 @@ The dataset include high-resolution images of Dead Sea Scroll fragments, along w
 
 The trained bar detection model can be downloaded from [here](https://github.com/TAU-CH/qumran_segmenting_dead_sea_scroll_fragments_for_a_scientific_image_set/releases/download/v1.0.0/bar_detection_model_final.pth).
 
-<! --- [here](https://tauex-my.sharepoint.com/:u:/g/personal/berat_tauex_tau_ac_il/EQsbt9qn1P9KtuJmZ2ffJP8BhMFh5uAkKjykD__ecki07Q?e=LPHsSL). -->
+<!--[here](https://tauex-my.sharepoint.com/:u:/g/personal/berat_tauex_tau_ac_il/EQsbt9qn1P9KtuJmZ2ffJP8BhMFh5uAkKjykD__ecki07Q?e=LPHsSL). -->
 
 ## Sample bar detection results
 
